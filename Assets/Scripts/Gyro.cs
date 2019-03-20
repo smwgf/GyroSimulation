@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,11 +13,26 @@ public class Gyro : MonoBehaviour {
     public GameObject cameraContainer;
     public Text magneticText;
     public Text gyroText;
+    public Text wifiText;
+    WifiSignalScan wifiScan;
+
 
     // Use this for initialization
     void Start () {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         gyroEnabled = EnableGyro();
+        wifiScan=WifiSignalScan.GetInscance();
+                
+        wifiScan.SetCallback(WifiResultHandler);
+        //wifiScan.StartScan();
+        StartCoroutine("WifiScanThread");
+    }
+    public void WifiResultHandler(string result)
+    {
+        wifiText.text = $"test wifi : {result}";
+        //wifiScan.StartScan();
+        //wifiText.text = $"test wifi : {wifiScan.GetLastScanData()}";
+
     }
     private bool EnableGyro()
     {
@@ -46,6 +62,16 @@ public class Gyro : MonoBehaviour {
             //cameraContainer.transform.localRotation = new Quaternion(0.5f, 0.5f, -0.5f, 0.5f) * gyro.attitude * new Quaternion(0,0,1,0);
             cameraContainer.transform.localRotation = DeviceRotation.Get();
             gyroText.text = "gyro x: " + cameraContainer.transform.localRotation.eulerAngles.x + " y: " + cameraContainer.transform.localRotation.eulerAngles.y + " z: " + cameraContainer.transform.localRotation.eulerAngles.z;
+            //wifiText.text = $"test wifi : {wifiScan.GetLastScanData()}";
+            //Debug.Log($"test wifi : {wifiScan.GetLastScanData()}" );
         }        
+    }
+    IEnumerator WifiScanThread()
+    {        
+        while (true)
+        {
+            wifiScan.StartScan();
+            yield return new WaitForSeconds(30.0f);
+        }
     }
 }
