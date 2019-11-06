@@ -1,4 +1,4 @@
-<h1>#GyroSimulation</h1>
+<h1>GyroSimulation</h1>
 
 3D VR simulation with unity using Gyroscope, magnetic field, accelerometer sensor.
 
